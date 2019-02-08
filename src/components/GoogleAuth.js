@@ -1,35 +1,40 @@
 import React, { Component } from 'react';
-
+import {connect} from 'react-redux';
+import { signIn, signOut } from '../actions/index';
 class GoogleAuth extends Component {
-    state = {isSignedIn: null}
     componentDidMount(){
         window.gapi.load('client:auth2', () => {
             window.gapi.client.init({
                 clientId:'644196156524-7fu2slqe0hmjmjji14lt2cbckkvl546u.apps.googleusercontent.com',
                 scope: 'email'
-            }).then(()=>{
+            }).then(() => {
                 this.auth = window.gapi.auth2.getAuthInstance();
-                this.setState({isSignedIn: this.auth.isSignedIn.get() })
+                this.onAuthChange(this.auth.isSignedIn.get());
                 this.auth.isSignedIn.listen(this.onAuthChange);
             });
         });
     }
-    onAuthChange = () => {
-        this.setState({isSignedIn: this.auth.isSignedIn.get() })
+    onAuthChange = isSignedIn => {
+        if(isSignedIn){
+            this.props.signIn();
+        }
+        else {
+            this.props.signOut();
+        }
     }
-    onSignIn = () => {
+    // these two helper method call the gapi instances to either sign in or sign out.
+    onSignInClick = () => {
         this.auth.signIn();
     }
-    onSignOut = () => {
+    onSignOutClick = () => {
         this.auth.signOut();
     }
-    renderAuthButton = () => {
-        if(this.state.isSignedIn === null){
-            return null;
-        }
-       else if(this.state.isSignedIn){
+    //This helper method return the div element of button according to the state of authReducer.
+    // if the state in authReduce is true, it gives the signOut button and viceversa.
+    renderAuthButton(){
+        if(this.props.isSignedIn){
             return(
-            <button onClick = {this.onSignOut} className = "ui red google button"> 
+            <button onClick = {this.onSignOutClick} className = "ui red google button"> 
                 <i className = "google icon"/>
                 Sign Out
             </button>
@@ -37,7 +42,7 @@ class GoogleAuth extends Component {
         }
         else {
             return (
-                <button onClick = {this.onSignIn} className = "ui primary google button"> 
+                <button onClick = {this.onSignInClick} className = "ui primary google button"> 
                 <i className = "google icon"/>
                 Sign In with Google
             </button>
@@ -52,5 +57,9 @@ class GoogleAuth extends Component {
         );
     }
 }
-
-export default GoogleAuth;
+const mapStateToProps = (state) => {
+    return {isSignedIn: state.auth.isSignedIn};
+}
+// connect function takes two argument. In the first arfument, there are two objects mapStateToProps and the action creator.
+//we need to import the action creator to change the state in reducer store.
+export default connect(mapStateToProps, {signIn, signOut})(GoogleAuth);
