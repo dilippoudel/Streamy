@@ -14,7 +14,8 @@ const App = () => {
         <div>
         <Header/>
             <Route  path = "/" exact component = {StreamList} />
-            <Route path = "/streams/new" exact component = {StreamCreate}/>
+            <Route path = "/streams/new" exact render= {()=> <StreamCreate/>} />
+              {/* when the component is connected to redux-form, the function need to pass in Route, but it takes an normal component like in below in other cases */}
             <Route path = "/streams/show" exact component = {StreamShow}/>
             <Route path = "/streams/edit" exact component = {StreamEdit}/>
             <Route path = "/streams/delete" exact component = {StreamDelete}/>
