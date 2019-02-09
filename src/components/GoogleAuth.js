@@ -15,8 +15,11 @@ class GoogleAuth extends Component {
         });
     }
     onAuthChange = isSignedIn => {
+        //In google auth, we can grab the id of user who's signed i by this method:
+        //gapi.auth2.getAuthInstance().currentUser.get().getId()
+
         if(isSignedIn){
-            this.props.signIn();
+            this.props.signIn(this.auth.currentUser.get().getId());
         }
         else {
             this.props.signOut();
