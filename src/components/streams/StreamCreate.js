@@ -18,14 +18,20 @@ class StreamCreate extends React.Component {
             <input {...input} />
             </div>
         );
-	}
+    }
+    onSubmit(formValues){
+        console.log(formValues)
+    }
+
 	render() {
 		return (
-			<form className = "ui form">
+            // redux-form has its own handleSubmit method to handle the form submission.
+			<form onSubmit = {this.props.handleSubmit(this.onSubmit)} className = "ui form">
 				{/* Field component have "name" and "component" property. component may be any helper method or react component*/}
 				<Field name="title" component={this.renderInput} label = "Enter Title"/>
 				<Field name="description" component={this.renderInput} label = "Enter Description"/>
-			</form>
+			<button className = "ui primary button">Submit</button>
+            </form>
 		);
 	}
 }
